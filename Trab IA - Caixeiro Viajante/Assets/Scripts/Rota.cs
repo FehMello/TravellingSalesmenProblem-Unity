@@ -5,15 +5,22 @@ using UnityEngine;
 
 public class Rota : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    //tamanho array genes da rota tem q ser de acordo com numero de cidades+1
+    //
 
-    // Update is called once per frame
-    void Update()
+    Queue Cromos = new Queue();
+
+    // Start is called before the first frame update
+    public void CriaCromossomosIniciais(int numerocidades)
     {
         
+        int tempCidades = numerocidades;
+        numerocidades++;
+
+        for(int i=0; i<numerocidades; i++)
+        {
+            Cromos.Enqueue(Random.Range(0, tempCidades));
+        }
+
     }
 }

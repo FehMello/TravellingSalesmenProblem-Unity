@@ -12,37 +12,36 @@ public class Manager : MonoBehaviour
     public int qntCidades;//Objetos que os individuos vão 'interagir' para achar a melhor rota
     
     public GameObject CityObj;
+    private City CityScript;
 
     private List <Rota> _Rotas = new List<Rota>(); //O tamanho dessa lista tem que se manter igual à qnt de população durante o programa todo.
     [SerializeField]
-    private List<GameObject> _Cidades = new List<GameObject>();//Pra ter controle das cidades
+    private List<City> _Cidades = new List<City>();//Pra ter controle das cidades
     [SerializeField]
     private int _Populacao = 0;// Numero de individuos a serem criados, esse numero deve se manter fixo.
 
     void Start()
     {
-        //Cria cidades
+        
+        //Cria cidades e adiciona na lista
         for (int i = 0; i < qntCidades; i++)
         {
-            GameObject cityTMP;
+            GameObject CityTMP;
             Vector3 position = new Vector3(Random.Range(-13.0F, 13.0F), 0, Random.Range(-13.0F, 13.0F));
-            cityTMP=Instantiate(CityObj, position, Quaternion.identity) as GameObject;
-            _Cidades.Add(cityTMP);
+            CityTMP=Instantiate(CityObj, position, Quaternion.identity) as GameObject;
+            CityScript = CityTMP.GetComponent<City>();
+            _Cidades.Add(CityScript);
         }
 
-        //int temp = 0;
-
-        //Da ids pras cidades.
+        //Da ids pras cidades
         for (int i = 0; i < qntCidades; i++)
         {
-            City cidadetemp;
-            cidadetemp = _Cidades[i].GetComponent<City>();
-            cidadetemp.SetID(i);
-            cidadetemp.SetText(cidadetemp.GetID());
-            //_Cidades[i].GetComponent<City>().SetID(i);
-            //temp=_Cidades[i].GetComponent<City>().GetID();
-            //_Cidades[i].GetComponent<City>().SetID(i);
+            _Cidades[i].SetID(i);
+            _Cidades[i].SetText(_Cidades[i].GetID());
 
+            //City cidadetemp;
+            //cidadetemp = _Cidades[i].GetComponent<City>();
+            //cidadetemp.SetID(i);
         }
 
         //Pega numero de cidades 

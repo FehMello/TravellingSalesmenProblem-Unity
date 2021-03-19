@@ -31,7 +31,7 @@ public class City : MonoBehaviour
 
     public void SetText(int value)
     {
-        IDtext.SetText(value.ToString());
+        IDtext.SetText("CITY "+value.ToString());
         
     }
 

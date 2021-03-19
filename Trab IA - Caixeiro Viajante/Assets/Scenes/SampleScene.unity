@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a95429ccac8b0d24d9af62ea6d815e3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  qntCidades: 10
+  qntCidades: 5
   CityObj: {fileID: 4595590530637154831, guid: 2859784ed05be0b4f8747af7c917c399, type: 3}
   _Cidades: []
   _Populacao: 0
@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 1863967364}
   - component: {fileID: 1863967363}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
