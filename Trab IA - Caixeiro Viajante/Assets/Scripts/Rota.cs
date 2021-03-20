@@ -6,21 +6,34 @@ using UnityEngine;
 public class Rota : MonoBehaviour
 {
     //tamanho array genes da rota tem q ser de acordo com numero de cidades+1
-    //
+    //colocar calculo de fitness
+    private int _ID;
 
-    Queue Cromos = new Queue();
+    private Manager manager;
+    private List<City> dna;
 
-    // Start is called before the first frame update
-    public void CriaCromossomosIniciais(int numerocidades)
+ 
+
+    public Rota(int _ID, Manager manager)
     {
-        
-        int tempCidades = numerocidades;
-        numerocidades++;
-
-        for(int i=0; i<numerocidades; i++)
-        {
-            Cromos.Enqueue(Random.Range(0, tempCidades));
-        }
-
+        this.manager = manager;
+        this._ID = _ID;
+        dna = new List<City>(manager._Cidades);
     }
+
+ 
+    //public void CriaCromossomosIniciais(int numerocidades, City c)
+    //{
+        
+    //    int tempCidades = numerocidades;
+    //    numerocidades++;
+
+    //    for(int i=0; i<numerocidades; i++)
+    //    {
+    //        Cromos.Add(Random.Range(0, tempCidades));
+    //    }
+
+    //}
+
+ 
 }
