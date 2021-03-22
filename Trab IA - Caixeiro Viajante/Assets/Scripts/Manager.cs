@@ -11,8 +11,8 @@ public class Manager : MonoBehaviour
 
     public int qntCidades;//Objetos que os individuos vão 'interagir' para achar a melhor rota.   
     public GameObject CityObj; //Prefab da cidade
+    public int Populacao = 0; //Numero de individuos(ROTAS) a serem criadas, esse numero é especificado no inspector e não deve ser alterado no código.
 
-    private int _Populacao = 0; //Numero de individuos(ROTAS) a serem criadas, esse numero é especificado no inspector e não deve ser alterado no código.
     [SerializeField]
     private List <Rota> _Rotas = new List<Rota>(); //O tamanho dessa lista tem que se manter igual à qnt de população durante o programa todo.
     [SerializeField]
@@ -38,18 +38,21 @@ public class Manager : MonoBehaviour
         for (int i = 0; i < qntCidades; i++)
         {
             _Cidades[i].SetID(i);
-            _Cidades[i].SetText(_Cidades[i].GetID());
+            //_Cidades[i].SetText(_Cidades[i].GetID());
          
         }
 
         //Cria primeira população
-        for (int i = 0; i < _Populacao; i++)
+        for (int i = 0; i < Populacao; i++)
         {
-            _RotaScript = new Rota(i, this);
-
+            
+            _RotaScript = new Rota(this);
             _Rotas.Add(_RotaScript);
 
         }
+
+        _Rotas[0].MostrarRota();
+        _Rotas[0].CalculoDistRota();
 
     }
 

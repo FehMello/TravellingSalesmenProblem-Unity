@@ -35,9 +35,13 @@ public class City : MonoBehaviour
         
     }
 
-    public void getDistance(GameObject other)
+    public float getCityDistance(GameObject other)
     {
+        float cityDist = 0f;
 
+        cityDist=Vector3.Distance(transform.position, other.transform.position);
+
+        return cityDist;
     }
 
 
