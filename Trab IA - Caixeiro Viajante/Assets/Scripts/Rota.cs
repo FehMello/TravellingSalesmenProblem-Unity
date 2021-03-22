@@ -17,22 +17,29 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
     {
         this.manager = manager;
         dna = new List<City>(manager._Cidades); //Copia a lista de cidades do manager.
-        dna.Add(manager._Cidades[Random.Range(0,manager._Cidades.Count)]); //Adicionei +1 cidade pq ele tem que sair da origem e voltar pra ela.
+        dna.Add(manager._Cidades[Random.Range(0,manager._Cidades.Count)]); //Adicionei +1 cidade de indice random pq ele tem que sair da origem e voltar pra ela.
+        dna.ShuffleList();
     }
 
 
     public void MostrarRota()
     {
-        Debug.Log("O cromossomo dessa rota é: ");
-        for(int i=0; i< dna.Count; i++)
+        string aux=null;
+    
+        for (int i=0; i< dna.Count; i++)
         {
-           dna[i].GetID();
+            aux += dna[i].GetID().ToString();
+            
         }
+
+        Debug.Log("O cromossomo dessa rota é: " + aux);
     }
 
     //Calcula dist de todas as cidades dessa rota.
     public float CalculoDistRota()
     {
+        //calcula dist entre dna1-dna2, dna2-dna3 e assim por diante
+        //ele soma tudo.
         float totDist = 0.0f;
 
         for(int i=0; i<dna.Count; i++)
@@ -42,8 +49,11 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
                 if(dna[j] != null)
                 {
                     
-                    totDist+=dna[i].getCityDistance(dna[j].gameObject);
+                    totDist = totDist + dna[i].getCityDistance(dna[j].gameObject);           
+    
                 }
+
+                i = j;
             }
         }
 
@@ -54,9 +64,21 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
 
  
 
-    public void ShowRouteInfo()
+    public void DrawRoute()
     {
+        for (int i = 0; i < dna.Count; i++)
+        {
+            for (int j = 1; j < dna.Count; j++)
+            {
+                if (dna[j] != null)
+                {
 
+                    dna[i].DrawLine(dna[j].gameObject);
+
+                }
+                i = j;
+            }
+        }
     }
 
  

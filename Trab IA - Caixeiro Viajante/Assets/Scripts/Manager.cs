@@ -18,8 +18,9 @@ public class Manager : MonoBehaviour
     [SerializeField]
     public List<City> _Cidades = new List<City>();//Pra ter controle das cidades
     private City _CityScript;
-    [SerializeField]
     private Rota _RotaScript;
+
+    
 
     void Start()
     {
@@ -53,17 +54,61 @@ public class Manager : MonoBehaviour
 
         }
 
-        _Rotas[0].MostrarRota();
-        Debug.Log("This route dist is " + _Rotas[0].CalculoDistRota());
+        //_Rotas[0].MostrarRota();
+        //Debug.Log("This route dist is " + _Rotas[0].CalculoDistRota());
+
+        for (int i = 0; i < _Rotas.Count; i++)
+        {
+            _Rotas[i].MostrarRota();
+            Debug.Log("Rota " + i + " tem distancia " + _Rotas[i].CalculoDistRota());
+        }
+
+        //TESTE PRA VER SE ACHA BEST FIT BASEADO NA DISTANCIA DESSA POP INICIAL
+        //tem q da uma arrumada nas comparacao pq ele ta botando o msm fit como best e second best
+        int BestFitIndex = 0;
+        int SecondBestFitIndex = 0;
+
+        for (int i = 0; i < _Rotas.Count; i++)
+        {
+            for (int j = 0; j < _Rotas.Count; j++)
+            {
+                if (_Rotas[i].CalculoDistRota() > _Rotas[j].CalculoDistRota())
+                {
+                    BestFitIndex = i;
+                    SecondBestFitIndex = j;
+                }
+                else
+                {
+                    BestFitIndex = j;
+                    SecondBestFitIndex = i;
+                }
+            }
+        }
+
+        Debug.Log("Rota " + BestFitIndex + " tem melhor fit.");
+        Debug.Log("Rota " + SecondBestFitIndex + " tem SEGUNDO melhor fit.");
 
     }
 
    
     void Update()
     {
+        //sequencia de comandos por geração
+        //1) olhar rotas e ver melhor fit
+        //2) pegar 2 melhores e mistura
+        //3) sofrimento
+
+        //mostra as rotas
        
+
+
+
         
 
 
+
+
     }
+
+
 }
