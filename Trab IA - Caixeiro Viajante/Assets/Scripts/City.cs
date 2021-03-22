@@ -12,6 +12,7 @@ public class City : MonoBehaviour
     private bool _isOrigin = false; // Diz se essa cidade é a origem, lembrando que a rota tem que sair da origem e chegar na origem.
     [SerializeField]
     private TMP_Text _IDtext;
+    private new LineRenderer renderer;
 
     void Start()
     {
@@ -35,7 +36,12 @@ public class City : MonoBehaviour
         
     }
 
-    public float getCityDistance(GameObject other)
+    public void SetOrigin(bool value)
+    {
+        _isOrigin = value;
+    }
+
+    public float getCityDistance(GameObject other) //Retorna dist da cidade atual até a cidade "other"
     {
         float cityDist = 0f;
 
@@ -43,6 +49,7 @@ public class City : MonoBehaviour
 
         return cityDist;
     }
+
 
 
 

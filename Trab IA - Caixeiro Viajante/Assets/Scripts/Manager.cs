@@ -38,9 +38,11 @@ public class Manager : MonoBehaviour
         for (int i = 0; i < qntCidades; i++)
         {
             _Cidades[i].SetID(i);
-            //_Cidades[i].SetText(_Cidades[i].GetID());
+            _Cidades[i].SetText(_Cidades[i].GetID());
          
         }
+
+        _Cidades[Random.Range(0, qntCidades)].SetOrigin(true); //Escolhe cidade aleatória para ser origem
 
         //Cria primeira população
         for (int i = 0; i < Populacao; i++)
@@ -52,7 +54,7 @@ public class Manager : MonoBehaviour
         }
 
         _Rotas[0].MostrarRota();
-        _Rotas[0].CalculoDistRota();
+        Debug.Log("This route dist is " + _Rotas[0].CalculoDistRota());
 
     }
 

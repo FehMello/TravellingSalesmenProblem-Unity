@@ -17,7 +17,7 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
     {
         this.manager = manager;
         dna = new List<City>(manager._Cidades); //Copia a lista de cidades do manager.
-        dna.Add(manager._Cidades[Random.Range(0,manager._Cidades.Count)]); //Adicionei
+        dna.Add(manager._Cidades[Random.Range(0,manager._Cidades.Count)]); //Adicionei +1 cidade pq ele tem que sair da origem e voltar pra ela.
     }
 
 
@@ -30,26 +30,34 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
         }
     }
 
+    //Calcula dist de todas as cidades dessa rota.
     public float CalculoDistRota()
     {
         float totDist = 0.0f;
-        //pega primeiro elemento e segundo
-        //calcula rota e soma numa var total
-        //vai pros 2 proximos faz mesma coia
+
         for(int i=0; i<dna.Count; i++)
         {
-            for(int j=1; j<dna.Count+1; j++)
+            for(int j=1; j<dna.Count; j++)
             {
                 if(dna[j] != null)
                 {
-                    dna[i].getCityDistance(dna[j].GetComponent<GameObject>());
+                    
+                    totDist+=dna[i].getCityDistance(dna[j].gameObject);
                 }
             }
         }
 
+
         return totDist;
     }
+
+
  
+
+    public void ShowRouteInfo()
+    {
+
+    }
 
  
 }
