@@ -67,22 +67,17 @@ public class Manager : MonoBehaviour
         //tem q da uma arrumada nas comparacao pq ele ta botando o msm fit como best e second best
         int BestFitIndex = 0;
         int SecondBestFitIndex = 0;
+        float MaiorDist = 99999999f; //Var auxiliar
 
         for (int i = 0; i < _Rotas.Count; i++)
         {
-            for (int j = 0; j < _Rotas.Count; j++)
-            {
-                if (_Rotas[i].CalculoDistRota() > _Rotas[j].CalculoDistRota())
+                if (_Rotas[i].CalculoDistRota() < MaiorDist)
                 {
                     BestFitIndex = i;
-                    SecondBestFitIndex = j;
+
                 }
-                else
-                {
-                    BestFitIndex = j;
-                    SecondBestFitIndex = i;
-                }
-            }
+               
+
         }
 
         Debug.Log("Rota " + BestFitIndex + " tem melhor fit.");
@@ -93,10 +88,10 @@ public class Manager : MonoBehaviour
    
     void Update()
     {
-        //sequencia de comandos por geração
-        //1) olhar rotas e ver melhor fit
-        //2) pegar 2 melhores e mistura
-        //3) sofrimento
+        //A CADA GERAÇÃO:
+        //1) olhar lista de rotas e ver melhor fit (SELECAO)
+        //2) pegar 2 melhores e mistura (CROSSOVER)
+        //3) mutacao (PODE TER CHANCE DE ACONTECER OU N)
 
         //mostra as rotas
        
