@@ -249,9 +249,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a95429ccac8b0d24d9af62ea6d815e3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OriginMaterial: {fileID: 2100000, guid: e961227a853f8c545a3dac8d2130f939, type: 2}
   qntCidades: 6
   CityObj: {fileID: 4595590530637154831, guid: 2859784ed05be0b4f8747af7c917c399, type: 3}
-  Populacao: 4
+  Populacao: 10
+  Geracao: 0
+  first: 0
+  second: 0
   _Cidades: []
 --- !u!4 &410176642
 Transform:

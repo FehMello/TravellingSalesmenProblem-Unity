@@ -9,20 +9,21 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
     //colocar calculo de fitness
 
     private Manager manager;
-    private List<City> dna;
-
+    public List<City> dna;
+    bool HasOrigin = false;
  
 
-    public Rota(Manager manager)
+    public Rota(Manager manager, bool HasOrigin)
     {
         this.manager = manager;
+        this.HasOrigin = HasOrigin;
         dna = new List<City>(manager._Cidades); //Copia a lista de cidades do manager.
         dna.Add(manager._Cidades[Random.Range(0,manager._Cidades.Count)]); //Adicionei +1 cidade de indice random pq ele tem que sair da origem e voltar pra ela.
         dna.ShuffleList();
     }
 
 
-    public void MostrarRota()
+    public void MostrarCromo()
     {
         string aux=null;
     
@@ -61,8 +62,35 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
         return totDist;
     }
 
+    public City ReturnGene(int index)
+    {
+        City gene=null;
 
- 
+        for (int i = 0; i < dna.Count; i++)
+        {
+            if(i == index)
+            {
+                gene = dna[i];
+            }
+        }
+
+        return gene;
+    }
+
+    public void SetHasOrigin(bool value)
+    {
+        HasOrigin = value;
+
+    }
+
+    public bool GetHasOrigin()
+    {
+        return HasOrigin;
+
+    }
+
+
+
 
     public void DrawRoute()
     {

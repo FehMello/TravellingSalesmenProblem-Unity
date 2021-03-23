@@ -43,6 +43,11 @@ public class City : MonoBehaviour
         _isOrigin = value;
     }
 
+    public bool GetOrigin()
+    {
+        return _isOrigin;
+    }
+
     public float getCityDistance(GameObject other) //Retorna dist da cidade atual até a cidade "other"
     {
         float cityDist = 0.0f;
