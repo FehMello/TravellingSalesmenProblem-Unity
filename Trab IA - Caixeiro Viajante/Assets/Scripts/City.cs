@@ -54,7 +54,7 @@ public class City : MonoBehaviour
 
         cityDist = Vector3.Distance(transform.position, other.transform.position);
 
-        //Debug.Log(this._ID + " vs " + other.GetComponent<City>().GetID());
+        //Debug.Log(" Coord cidade " + this.GetID() + " " + this.transform.position.x + " " + this.transform.position.z + " vs Coord cidade " + other.GetComponent<City>().GetID() + " " + other.transform.position.x + " " + other.transform.position.z);
 
         return cityDist;
     }

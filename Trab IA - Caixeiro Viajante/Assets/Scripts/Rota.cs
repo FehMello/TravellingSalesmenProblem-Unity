@@ -10,20 +10,19 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
 
     private Manager manager;
     public List<City> dna;
-    bool HasOrigin = false;
  
-
-    public Rota(Manager manager, bool HasOrigin)
+    //Convenção: todas as rotas vão começar no 0
+    public Rota(Manager manager)
     {
         this.manager = manager;
-        this.HasOrigin = HasOrigin;
         dna = new List<City>(manager._Cidades); //Copia a lista de cidades do manager.
-        dna.Add(manager._Cidades[Random.Range(0,manager._Cidades.Count)]); //Adicionei +1 cidade de indice random pq ele tem que sair da origem e voltar pra ela.
-        dna.ShuffleList();
+        dna.Remove(dna[0]); // Remove a cidade 0 que ta na posicao 0
+        dna.Shuffle(); // Mistura
+        dna.Insert(0, manager._Cidades[0]); //Insere cidade 0 na posicao 0 novamente
     }
 
 
-    public void MostrarCromo()
+    public string MostrarCromo()
     {
         string aux=null;
     
@@ -33,10 +32,10 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
             
         }
 
-        Debug.Log("O cromossomo dessa rota é: " + aux);
+        return aux;
     }
 
-    //Calcula dist de todas as cidades dessa rota.
+    //Calcula dist percorrida na rota.
     public float CalculoDistRota()
     {
         //calcula dist entre dna1-dna2, dna2-dna3 e assim por diante
@@ -50,7 +49,7 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
                 if(dna[j] != null)
                 {
                     
-                    totDist = totDist + dna[i].getCityDistance(dna[j].gameObject);           
+                    totDist = totDist + dna[i].getCityDistance(dna[j].gameObject); //Da origem até ultimo    
     
                 }
 
@@ -58,37 +57,60 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
             }
         }
 
+        totDist = totDist + dna[dna.Count - 1].getCityDistance(dna[0].gameObject); //Do ultimo DIRETO até origem (sem passar de novo nas outras city)
+
 
         return totDist;
     }
 
-    public City ReturnGene(int index)
+    //Compara se o cromossomo inteiro de um individuo eh igual ao outro
+    public bool ComparaCromos(Rota rota) 
     {
-        City gene=null;
+        bool igual = false;
 
-        for (int i = 0; i < dna.Count; i++)
+        for(int i=0; i<this.dna.Count; i++)
         {
-            if(i == index)
+            if(this.dna[i].GetID() == rota.dna[i].GetID())
             {
-                gene = dna[i];
+                igual = true;
+            }
+            else
+            {
+                igual = false;
+                break;
+            }
+            if (igual == false) break;
+        }
+
+        return igual;
+
+    }
+
+    //Verifica se o gene especifico do parente em questão já existe no cromo do filho
+    public bool VerificarGene(Rota rota, int index)  
+    {
+        bool repetido = false;
+
+        if (this.dna.Count == 1) //Verifica se este dna (que puxou a função) tá vazio
+        {
+            //Aqui significa que child só tem a origem por enquanto
+            repetido = false;
+        }
+        else
+        {
+            for (int i = 1; i < this.dna.Count; i++)
+            {
+                if(rota.dna[index].GetID() == this.dna[i].GetID()) //Compara dna especifico com todos q tiver no child atualmente
+                {
+                    repetido = true; // eh necessario apenas 1 igual para que seja true
+                    break;
+                }
+
             }
         }
 
-        return gene;
+        return repetido;
     }
-
-    public void SetHasOrigin(bool value)
-    {
-        HasOrigin = value;
-
-    }
-
-    public bool GetHasOrigin()
-    {
-        return HasOrigin;
-
-    }
-
 
 
 
@@ -101,12 +123,14 @@ public class Rota //Sem :Monobehavior pq se não eu não consigo referenciar poi
                 if (dna[j] != null)
                 {
 
-                    dna[i].DrawLine(dna[j].gameObject);
+                    dna[i].DrawLine(dna[j].gameObject); //Da origem até ultimo  
 
                 }
                 i = j;
             }
         }
+
+        dna[dna.Count - 1].DrawLine(dna[0].gameObject); //Do ultimo DIRETO até origem (sem passar de novo nas outras city)
     }
 
  
