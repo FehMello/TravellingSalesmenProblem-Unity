@@ -92,11 +92,11 @@ public class Manager : MonoBehaviour
         Debug.Log("StartCut: " + Startcutindex + " || Endcut: " + Endcutindex);
 
         var slice = _Rotas[first].dna.Skip(Startcutindex).Take(Endcutindex - Startcutindex).ToList(); //Pega um trecho random do best.
+        //Skip = IGNORA o numero de elementos especificados no parenteses e RETORNA o restante de elementos depois desses elementos pulados
+        //Take = RETORNA os primeiros x especificados no parenteses e IGNORA o restante.
 
-        //Pegar 2 pontos de crossovers DIFERENTES de um dos parents
-        //Copiar esse trecho pras MESMAS posições correspondentes q era no parent
 
-        for (int i = 0; i < _Rotas[second].dna.Count; i++) //Pega restante de dna que falta do second.
+        for (int i = 0; i < _Rotas[second].dna.Count; i++) //Pega do second o que falta de dna
         {
             if (!slice.Contains(_Rotas[second].dna[i]))
             {
