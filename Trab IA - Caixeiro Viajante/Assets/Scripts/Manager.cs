@@ -78,7 +78,7 @@ public class Manager : MonoBehaviour
 
     }
 
-    void Crossover(int first, int second) // ARRUMAR
+    void Crossover(int first, int second) // AINDA PODE ACONTECER DO FILHO FICAR COM 2 DNA REPETIDO
     {
         Rota Child = new Rota(this);
         Child.dna.Clear();
@@ -90,15 +90,15 @@ public class Manager : MonoBehaviour
         for (int i = 1; i < qntCidades; i++)
         {            
             if (aux ==true)
-            { 
-                if(Child.VerificarGene(_Rotas[first], i) == false)
+            {   //Primeiro tenta ver se o gene em questao do first existe no child, pode retornar true ou false
+                if (Child.VerificarGene(_Rotas[first], i) == false) 
                 {
                     Child.dna.Add(_Rotas[first].dna[i]);
                     aux = false;
                 }
                 else
                 {
-                    if (_Rotas[first].dna.ElementAtOrDefault(i+1)!= null)
+                    if (_Rotas[first].dna.ElementAtOrDefault(i+1)!= null) //ao inves disso tentar pegar elemento random? e verificar?
                     {
                         Child.dna.Add(_Rotas[first].dna[i+1]);
                         aux = false;

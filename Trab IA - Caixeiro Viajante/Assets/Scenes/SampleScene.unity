@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OriginMaterial: {fileID: 2100000, guid: e961227a853f8c545a3dac8d2130f939, type: 2}
-  qntCidades: 10
+  qntCidades: 6
   CityObj: {fileID: 4595590530637154831, guid: 2859784ed05be0b4f8747af7c917c399, type: 3}
   Populacao: 5
   Geracao: 0
