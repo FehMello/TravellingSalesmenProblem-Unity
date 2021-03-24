@@ -7,26 +7,23 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
-    //CONVENCIONAR CIDADE 0 COMO ORIGEM SEMPRE, USAR QNT CIDADES COMO NUM GENES
-    //MUDAR O DRAW - PEGAR
     //nossa população/individuos q estamos testando n sao as cidades e sim as rotas
     //as rotas (individuos) terao a cidade no array.
     public Material OriginMaterial;
-    public int qntCidades;//Objetos que os individuos vão 'interagir' para achar a melhor rota.   
+    public int qntCidades;//qntCidades == qntGenes
     public GameObject CityObj; //Prefab da cidade
     public int Populacao = 0; //Numero de individuos(ROTAS) a serem criadas, esse numero é especificado no inspector e não deve ser alterado no código.
     public int Geracao = 0;
     public int firstBest = 0;
     public int secondBest = 0;
 
-    [SerializeField]
+
     private List <Rota> _Rotas = new List<Rota>(); //O tamanho dessa lista tem que se manter igual à qnt de população durante o programa todo.
-    [SerializeField]
     public List<City> _Cidades = new List<City>();//Pra ter controle das cidades
     private City _CityScript;
     private float MenorDist; //Variavel modifica dentro de mais de um metodo
 
-    int SelectFirstFit()
+    int SelectFirstFit() //ok
     {
         //Variavel guarda index
         int Best = 0;
@@ -44,13 +41,13 @@ public class Manager : MonoBehaviour
             }
 
         }
-
+        
         Debug.Log("CROMO DO BEST: " + _Rotas[Best].MostrarCromo());
         return Best;
 
     }
 
-    int SelectSecondFit(int First)
+    int SelectSecondFit(int First)//ok
     {
   
         int FirstBest = First;
@@ -78,70 +75,43 @@ public class Manager : MonoBehaviour
 
     }
 
-    void Crossover(int first, int second) // AINDA PODE ACONTECER DO FILHO FICAR COM 2 DNA REPETIDO
+    //usar ordered crossover (ox1) - mais adequado quando se pode ter um elem de cada vez 
+    void Crossover(int first, int second)
     {
+        //Remove o primeiro elem dos parents pra ficar mais simples de iterar.
+        _Rotas[first].dna.RemoveAt(0); 
+        _Rotas[second].dna.RemoveAt(0);
+        
         Rota Child = new Rota(this);
         Child.dna.Clear();
-        Child.dna.Add(_Cidades[0]);
 
-        bool aux = true;
+        int Startcutindex = 0;
+        int Endcutindex = 0;
+        Startcutindex = Random.Range(0, _Rotas[first].dna.Count-1);
+        Endcutindex = Random.Range(Startcutindex+1, _Rotas[first].dna.Count - 1);
+        Debug.Log("StartCut: " + Startcutindex + " || Endcut: " + Endcutindex);
 
-        //Troca os valores dos genes
-        for (int i = 1; i < qntCidades; i++)
-        {            
-            if (aux ==true)
-            {   //Primeiro tenta ver se o gene em questao do first existe no child, pode retornar true ou false
-                if (Child.VerificarGene(_Rotas[first], i) == false) 
-                {
-                    Child.dna.Add(_Rotas[first].dna[i]);
-                    aux = false;
-                }
-                else
-                {
-                    if (_Rotas[first].dna.ElementAtOrDefault(i+1)!= null) //ao inves disso tentar pegar elemento random? e verificar?
-                    {
-                        Child.dna.Add(_Rotas[first].dna[i+1]);
-                        aux = false;
-                    }
-                    else
-                    {
-                        Child.dna.Add(_Rotas[first].dna[i - 1]);
-                        aux = false;
-                    }
+        var slice = _Rotas[first].dna.Skip(Startcutindex).Take(Endcutindex - Startcutindex).ToList(); //Pega um trecho random do best.
 
-                }
-              
-            }
-            else
+        //Pegar 2 pontos de crossovers DIFERENTES de um dos parents
+        //Copiar esse trecho pras MESMAS posições correspondentes q era no parent
+
+        for (int i = 0; i < _Rotas[second].dna.Count; i++) //Pega restante de dna que falta do second.
+        {
+            if (!slice.Contains(_Rotas[second].dna[i]))
             {
-                if (Child.VerificarGene(_Rotas[second], i) == false)
-                {
-                    Child.dna.Add(_Rotas[second].dna[i]);
-                    aux = true;
-                }
-                else
-                {
-                    if (_Rotas[second].dna.ElementAtOrDefault(i + 1) != null)
-                    {
-                        Child.dna.Add(_Rotas[second].dna[i + 1]);
-                        aux = true;
-                    }
-                    else
-                    {
-                        Child.dna.Add(_Rotas[second].dna[i - 1]);
-                        aux = true;
-                    }
-
-                }
-
+                slice.Add(_Rotas[second].dna[i]);
             }
-          
         }
 
-        
+        Child.dna = slice;
+        Child.dna.Insert(0, _Cidades[0]);
+        _Rotas[first].dna.Insert(0, _Cidades[0]);
+        _Rotas[second].dna.Insert(0, _Cidades[0]);
 
 
         _Rotas.Add(Child);
+
         Debug.Log("CROMO DO FILHO: " + _Rotas[_Rotas.Count - 1].MostrarCromo());
   
     }
