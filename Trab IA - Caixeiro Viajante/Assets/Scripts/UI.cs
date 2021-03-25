@@ -9,24 +9,24 @@ public class UI : MonoBehaviour
     public TMP_Text Besttext;
     public Manager Manager;
 
-  
 
-    // Start is called before the first frame update
+    public void AtualizaGeracao(int geracao)
+    {
+        Geracaotext.SetText("Geração: " + geracao);
+    }
+
+    public void AtualizaBest(Rota rota)
+    {
+        Besttext.gameObject.SetActive(true);
+        Besttext.SetText("Melhor cromossomo: " + rota.MostrarCromo());
+    }
+
     void Start()
     {
+        Besttext.gameObject.SetActive(false);
         Manager=Manager.FindObjectOfType<Manager>();
-
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-        Geracaotext.SetText("Geração: " + Manager.Geracao);
 
-        Besttext.SetText("Melhor cromossomo: " + Manager._Rotas[Manager.firstBest].MostrarCromo());
-   
-        
-    }
 }

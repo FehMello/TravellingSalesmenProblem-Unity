@@ -7,198 +7,82 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
-    //nossa população/individuos q estamos testando n sao as cidades e sim as rotas
-    //as rotas (individuos) terao a cidade no array.
     public Material OriginMaterial;
-    public int qntCidades;//qntCidades == qntGenes
-    public GameObject CityObj; //Prefab da cidade
-    public int Populacao = 0; //Numero de individuos(ROTAS) a serem criadas, esse numero é especificado no inspector e não deve ser alterado no código.
+    public int QntCidades;
+    public GameObject CityObj; 
+    public int Populacao = 0; //Numero de indivíduos(ROTAS) a serem criadas. É especificado no inspector e NÃO deve ser alterado durante o código.
+    [System.NonSerialized]
     public int Geracao = 0;
-    public int firstBest = 0;
-    public int secondBest = 0;
+    [System.NonSerialized]
+    public List <Rota> Rota = new List<Rota>(); //O tamanho dessa lista tem que se manter igual ao número de população durante cada geração.
+    [System.NonSerialized]
+    public List<City> Cidade = new List<City>(); 
 
-
-    public List <Rota> _Rotas = new List<Rota>(); //O tamanho dessa lista tem que se manter igual à qnt de população durante o programa todo.
-    public List<City> _Cidades = new List<City>();//Pra ter controle das cidades
-    private City _CityScript;
-    private float MenorDist; //Variavel modifica dentro de mais de um metodo
-
-    int SelectFirstFit() //ok
-    {
-        //Variavel guarda index
-        int Best = 0;
-     
-        MenorDist = float.MaxValue; //Var auxiliar
-
-        for (int i = 0; i < _Rotas.Count; i++)
-        {
-            if (_Rotas[i].CalculoDistRota() < MenorDist)
-            {
-
-                MenorDist = _Rotas[i].CalculoDistRota();
-                Best = i;
-
-            }
-
-        }
-        
-        Debug.Log("CROMO DO BEST: " + _Rotas[Best].MostrarCromo());
-        return Best;
-
-    }
-
-    int SelectSecondFit(int First)//ok
-    {
-  
-        int FirstBest = First;
-        int SecondBest=0;
-        MenorDist = float.MaxValue; //Var auxiliar
-
-        for (int i = 0; i < _Rotas.Count; i++)
-        {
-            if (i != FirstBest)
-            {
-                if (_Rotas[i].CalculoDistRota() < MenorDist)
-                {
-
-                    MenorDist = _Rotas[i].CalculoDistRota();
-                    SecondBest = i;
-
-                }
-
-            }
-
-        }
-
-        Debug.Log("CROMO DO SECOND BEST: " + _Rotas[SecondBest].MostrarCromo());
-        return SecondBest;
-
-    }
-
-    //usar ordered crossover (ox1) - mais adequado quando se pode ter um elem de cada vez 
-    void Crossover(int first, int second)
-    {
-        //Remove o primeiro elem dos parents pra ficar mais simples de iterar.
-        _Rotas[first].dna.RemoveAt(0); 
-        _Rotas[second].dna.RemoveAt(0);
-        
-        Rota Child = new Rota(this);
-        Child.dna.Clear();
-
-        int Startcutindex = 0;
-        int Endcutindex = 0;
-        Startcutindex = Random.Range(0, _Rotas[first].dna.Count-1);
-        Endcutindex = Random.Range(Startcutindex+1, _Rotas[first].dna.Count - 1);
-        Debug.Log("StartCut: " + Startcutindex + " || Endcut: " + Endcutindex);
-
-        var slice = _Rotas[first].dna.Skip(Startcutindex).Take(Endcutindex - Startcutindex).ToList(); //Pega um trecho random do best.
-        //Skip = IGNORA o numero de elementos especificados no parenteses e RETORNA o restante de elementos depois desses elementos pulados
-        //Take = RETORNA os primeiros x especificados no parenteses e IGNORA o restante.
-
-
-        for (int i = 0; i < _Rotas[second].dna.Count; i++) //Pega do second o que falta de dna
-        {
-            if (!slice.Contains(_Rotas[second].dna[i]))
-            {
-                slice.Add(_Rotas[second].dna[i]);
-            }
-        }
-
-        Child.dna = slice;
-        Child.dna.Insert(0, _Cidades[0]);
-        _Rotas[first].dna.Insert(0, _Cidades[0]);
-        _Rotas[second].dna.Insert(0, _Cidades[0]);
-
-
-        _Rotas.Add(Child);
-
-        Debug.Log("CROMO DO FILHO: " + _Rotas[_Rotas.Count - 1].MostrarCromo());
-  
-    }
-
-    //fazer metodo mutacao
-
-    //Menos fit eh quem tem maior distancia percorrida
-    void RetiraMenosFit()
-    {        
-        int menosfit = 0; //Recebe indice
-        float MaiorDist=0;
-
-        for (int i = 0; i < _Rotas.Count; i++)
-        {        
-            if( _Rotas[i].CalculoDistRota() > MaiorDist)
-            {
-                MaiorDist = _Rotas[i].CalculoDistRota();
-                menosfit = i;
-            }
-        }
-
-        Debug.Log("CROMO MENOS FIT: " + _Rotas[menosfit].MostrarCromo());
-
-        _Rotas.RemoveAt(menosfit);
-    }
+    private int _firstBest = 0;
+    private int _secondBest = 0;
+    private float _menorDist;
+    private bool _continuar;
+    private UI _uiScript;
+    private City _cityScript;
 
 
     void Start()
     {
- 
-        //Cria cidades e adiciona na lista
-        for (int i = 0; i < qntCidades; i++)
+        _continuar = false;
+        _uiScript = UI.FindObjectOfType<UI>();
+
+        //Instancia cidades em posições aleatórias e adiciona na lista
+        for (int i = 0; i < QntCidades; i++)
         {
             GameObject CityTMP;
-            Vector3 position = new Vector3(Random.Range(-13.0F, 13.0F), 0, Random.Range(-13.0F, 13.0F)); //Random position
+            Vector3 position = new Vector3(Random.Range(-13.0F, 13.0F), 0, Random.Range(-13.0F, 13.0F));
             CityTMP=Instantiate(CityObj, position, Quaternion.identity) as GameObject; //Cria um novo gameobject baseado no prefab CityObj.
-            _CityScript = CityTMP.GetComponent<City>(); //Para não precisar repetir getcomponent durante o restante do script, pois é pesado
-            _Cidades.Add(_CityScript);
+            _cityScript = CityTMP.GetComponent<City>(); //Para não precisar repetir getcomponent durante o restante do script, pois é pesado
+            Cidade.Add(_cityScript);
         }
 
-        //Da ids pras cidades
-        for (int i = 0; i < qntCidades; i++)
+        //Associa IDs às cidades e coloca os nomes correspondentes
+        for (int i = 0; i < QntCidades; i++)
         {
-            _Cidades[i].SetID(i);
-            _Cidades[i].SetText(_Cidades[i].GetID());
+            Cidade[i].SetID(i);
+            Cidade[i].SetText(Cidade[i].GetID());
          
         }
 
-        _Cidades[0].SetOrigin(true); //Por convenção, cidade 0 é sempre origem
-        _Cidades[0].GetComponent<MeshRenderer>().material = OriginMaterial; //Muda a cor da origem
+        Cidade[0].SetOrigin(true); //Por convenção, cidade 0 é sempre origem
+        Cidade[0].GetComponent<MeshRenderer>().material = OriginMaterial; //Muda a cor da origem
 
         //Cria primeira população
         for (int i = 0; i < Populacao; i++)
         {            
-            Rota Rota = new Rota(this);        
-            _Rotas.Add(Rota);
+            Rota rota = new Rota(this);
+            Rota.Add(rota);
         }
 
-
-        //Mostra rota pop inicial
-        for (int i = 0; i < _Rotas.Count; i++)
+        //Mostra rota pop inicial para fins de DEBUG
+        for (int i = 0; i < Rota.Count; i++)
         {
-            Debug.Log("Rota " + i + " tem cromo " + _Rotas[i].MostrarCromo() + " e distancia percorrida " + _Rotas[i].CalculoDistRota());
+            Debug.Log("Rota " + i + " tem cromo " + Rota[i].MostrarCromo() + " e distancia percorrida " + Rota[i].CalculoDistRota());
         }
-
-
-
     }
-
-    private bool continuar = false;
 
     void Update()
     {
         //Não deixa iniciar simulação enquanto houver individuos iguais na primeira população.
         //Isso é pra evitar de ter um FirstBest e SecondBest com mesmo genes.
-        if (continuar == false)
+        if (_continuar == false)
         {
             Debug.Log("Entrou continuar == false");
-            for (int i = 0; i < _Rotas.Count; i++)
+
+            for (int i = 0; i < Rota.Count; i++)
             {
-                for (int j = 1; j < _Rotas.Count; j++)
+                for (int j = 1; j < Rota.Count; j++)
                 {
-                    if (_Rotas[i].ComparaCromos(_Rotas[j]) == true)
+                    if (Rota[i].ComparaCromos(Rota[j]) == true)
                     {
-                        _Rotas[i].dna.RemoveAt(0);
-                        _Rotas[i].dna.Shuffle();
-                        _Rotas[i].dna.Insert(0, _Cidades[0]);
+                        Rota[i].dna.RemoveAt(0);
+                        Rota[i].dna.Shuffle();
+                        Rota[i].dna.Insert(0, Cidade[0]);
 
 
 
@@ -208,65 +92,72 @@ public class Manager : MonoBehaviour
 
             }
 
-            for (int i = 0; i < _Rotas.Count; i++)
+            for (int i = 0; i < Rota.Count; i++)
             {
-                for (int j = 1; j < _Rotas.Count; j++)
+                for (int j = 1; j < Rota.Count; j++)
                 {
-                    if (_Rotas[i].ComparaCromos(_Rotas[j]) == true)
+                    if (Rota[i].ComparaCromos(Rota[j]) == true)
                     {
 
-                        continuar = false;
+                        _continuar = false;
 
 
                     }
                     else
                     {
-                        continuar = true;
+                        _continuar = true;
                         break;
                     }
 
 
                 }
 
-                if (continuar == true) break;
+                if (_continuar == true) break;
             }
 
         }
         else
         {
             Debug.Log("Entrou continuar == true");
-            for (int i = 0; i < _Rotas.Count; i++)
+
+            for (int i = 0; i < Rota.Count; i++)
             {
-                Debug.Log("Rota " + i + " tem cromo " + _Rotas[i].MostrarCromo() + " e distancia percorrida " + _Rotas[i].CalculoDistRota());
+                Debug.Log("Rota " + i + " tem cromo " + Rota[i].MostrarCromo() + " e distancia percorrida " + Rota[i].CalculoDistRota());
             }
 
             if (Geracao < 300)
             {
-                firstBest = SelectFirstFit();
-               
-
-                secondBest = SelectSecondFit(firstBest);
+                _firstBest = SelectFirstFit();
 
 
-                Crossover(firstBest, secondBest);
+                _secondBest = SelectSecondFit(_firstBest);
 
-                for (int i = 0; i < _Rotas.Count; i++)
-                {
-                    Debug.Log("Rota " + i + " tem cromo " + _Rotas[i].MostrarCromo() + " e distancia percorrida " + _Rotas[i].CalculoDistRota());
-                }
+
+                Crossover(_firstBest, _secondBest);
+
+                Mutacao();
+
+                //for (int i = 0; i < Rota.Count; i++)
+                //{
+                //    Debug.Log("Rota " + i + " tem cromo " + Rota[i].MostrarCromo() + " e distancia percorrida " + Rota[i].CalculoDistRota());
+                //}
 
                 RetiraMenosFit();
 
 
-                _Rotas[firstBest].DrawRoute();
+                Rota[_firstBest].DrawRoute();
 
                 Geracao++;
+                _uiScript.AtualizaGeracao(Geracao);
+                
             }
 
             if (Geracao == 300)
             {
-                _Rotas[firstBest].DrawRoute();
-                Debug.Log("O mais fit eh a rota " + firstBest + " de cromossomo "  + _Rotas[firstBest].MostrarCromo());
+                _uiScript.AtualizaGeracao(Geracao);
+                _uiScript.AtualizaBest(Rota[_firstBest]);
+                Rota[_firstBest].DrawRoute();
+                Debug.Log("O mais fit eh a rota " + _firstBest + " de cromossomo "  + Rota[_firstBest].MostrarCromo());
                 UnityEditor.EditorApplication.Beep();
                 UnityEditor.EditorApplication.isPaused = true;
             }
@@ -275,6 +166,143 @@ public class Manager : MonoBehaviour
 
 
     }
+
+    //Seleciona o mais fitness
+    int SelectFirstFit()
+    {
+
+        int bestIndex = 0;
+
+        _menorDist = float.MaxValue;
+
+        for (int i = 0; i < Rota.Count; i++)
+        {
+            if (Rota[i].CalculoDistRota() < _menorDist)
+            {
+
+                _menorDist = Rota[i].CalculoDistRota();
+                bestIndex = i;
+
+            }
+
+        }
+
+        Debug.Log("CROMO DO BEST: " + Rota[bestIndex].MostrarCromo());
+        return bestIndex;
+
+    }
+
+    //Seleciona o segundo mais fitness
+    int SelectSecondFit(int first)
+    {
+
+        int firstBest = first;
+        int secondBest = 0;
+
+        _menorDist = float.MaxValue;
+
+        for (int i = 0; i < Rota.Count; i++)
+        {
+            if (i != firstBest)
+            {
+                if (Rota[i].CalculoDistRota() < _menorDist)
+                {
+
+                    _menorDist = Rota[i].CalculoDistRota();
+                    secondBest = i;
+
+                }
+
+            }
+
+        }
+
+        Debug.Log("CROMO DO SECOND BEST: " + Rota[secondBest].MostrarCromo());
+        return secondBest;
+
+    }
+
+    //Crossover usando Ordered Crossover (OX1) - É mais adequado quando não queremos repetir elemento
+    void Crossover(int first, int second)
+    {
+        //Remove o primeiro elemento dos parents pra ficar mais simples de iterar.
+        Rota[first].dna.RemoveAt(0);
+        Rota[second].dna.RemoveAt(0);
+
+        Rota Child = new Rota(this);
+        Child.dna.Clear();
+
+        int Startcutindex = 0;
+        int Endcutindex = 0;
+        Startcutindex = Random.Range(0, Rota[first].dna.Count - 1);
+        Endcutindex = Random.Range(Startcutindex + 1, Rota[first].dna.Count - 1);
+        Debug.Log("StartCut: " + Startcutindex + " || Endcut: " + Endcutindex);
+
+        var slice = Rota[first].dna.Skip(Startcutindex).Take(Endcutindex - Startcutindex).ToList(); //Pega um trecho random do best.
+        //Skip = IGNORA o numero de elementos especificados no parenteses e RETORNA o restante de elementos depois desses elementos pulados
+        //Take = RETORNA os primeiros x especificados no parenteses e IGNORA o restante.
+
+        //Pega o segundo melhor e preenche o child com o que falta de dna
+        for (int i = 0; i < Rota[second].dna.Count; i++)
+        {
+            if (!slice.Contains(Rota[second].dna[i]))
+            {
+                slice.Add(Rota[second].dna[i]);
+            }
+        }
+
+        Child.dna = slice;
+        Child.dna.Insert(0, Cidade[0]);
+        Rota[first].dna.Insert(0, Cidade[0]);
+        Rota[second].dna.Insert(0, Cidade[0]);
+
+
+        Rota.Add(Child);
+
+        Debug.Log("CROMO DO FILHO: " + Rota[Rota.Count - 1].MostrarCromo());
+
+    }
+
+    //Realiza mutação de uma rota randomicamente escolhida
+    void Mutacao()
+    {
+        int randomRota = 0;
+        int randomPos1 = 0;
+        int randomPos2 = 0;
+        City cityTemp;
+
+        randomRota = Random.Range(0, Rota.Count - 1);
+        randomPos1 = Random.Range(0, Rota.Count - 1);
+        randomPos2 = Random.Range(0, Rota.Count - 1);
+        Debug.Log("MUTAÇÃO: Cidade escolhida foi de cromo " + Rota[randomRota].MostrarCromo());
+
+        cityTemp = Rota[randomRota].dna[randomPos1];
+        Rota[randomRota].dna[randomPos1] = Rota[randomRota].dna[randomPos2];
+        Rota[randomRota].dna[randomPos2] = cityTemp;
+
+        Debug.Log("MUTAÇÃO: Cidade após mutação " + Rota[randomRota].MostrarCromo());
+    }
+
+    //Menos fit eh quem tem maior distancia percorrida
+    void RetiraMenosFit()
+    {
+        int menosfit = 0; //Recebe indice
+        float MaiorDist = 0;
+
+        for (int i = 0; i < Rota.Count; i++)
+        {
+            if (Rota[i].CalculoDistRota() > MaiorDist)
+            {
+                MaiorDist = Rota[i].CalculoDistRota();
+                menosfit = i;
+            }
+        }
+
+        Debug.Log("CROMO MENOS FIT: " + Rota[menosfit].MostrarCromo());
+
+        Rota.RemoveAt(menosfit);
+    }
+
 
 
 }
