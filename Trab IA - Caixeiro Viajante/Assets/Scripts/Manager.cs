@@ -11,6 +11,7 @@ public class Manager : MonoBehaviour
     public int QntCidades;
     public GameObject CityObj; 
     public int Populacao = 0; //Numero de indivíduos(ROTAS) a serem criadas. É especificado no inspector e NÃO deve ser alterado durante o código.
+    public int LimiteGeracoes;
     [System.NonSerialized]
     public int Geracao = 0;
     [System.NonSerialized]
@@ -24,6 +25,7 @@ public class Manager : MonoBehaviour
     private bool _continuar;
     private UI _uiScript;
     private City _cityScript;
+    private float _chance;
 
 
     void Start()
@@ -83,9 +85,6 @@ public class Manager : MonoBehaviour
                         Rota[i].dna.RemoveAt(0);
                         Rota[i].dna.Shuffle();
                         Rota[i].dna.Insert(0, Cidade[0]);
-
-
-
                     }
 
                 }
@@ -108,8 +107,6 @@ public class Manager : MonoBehaviour
                         _continuar = true;
                         break;
                     }
-
-
                 }
 
                 if (_continuar == true) break;
@@ -125,8 +122,8 @@ public class Manager : MonoBehaviour
                 Debug.Log("Rota " + i + " tem cromo " + Rota[i].MostrarCromo() + " e distancia percorrida " + Rota[i].CalculoDistRota());
             }
 
-            if (Geracao < 300)
-            {
+            if (Geracao < LimiteGeracoes)
+            {                              
                 _firstBest = SelectFirstFit();
 
 
@@ -135,7 +132,15 @@ public class Manager : MonoBehaviour
 
                 Crossover(_firstBest, _secondBest);
 
-                Mutacao();
+                _chance = Random.Range(0f, 1.0f);
+
+                Debug.Log("CHANCE: " + _chance);
+
+                if (_chance > 0.8) //20% chance de mutação
+                {
+                    Mutacao();
+                }
+               
 
                 //for (int i = 0; i < Rota.Count; i++)
                 //{
@@ -152,12 +157,12 @@ public class Manager : MonoBehaviour
                 
             }
 
-            if (Geracao == 300)
+            if (Geracao == LimiteGeracoes)
             {
                 _uiScript.AtualizaGeracao(Geracao);
                 _uiScript.AtualizaBest(Rota[_firstBest]);
                 Rota[_firstBest].DrawRoute();
-                Debug.Log("O mais fit eh a rota " + _firstBest + " de cromossomo "  + Rota[_firstBest].MostrarCromo());
+                Debug.Log("O mais fit é a Rota " + _firstBest + " de cromossomo "  + Rota[_firstBest].MostrarCromo());
                 UnityEditor.EditorApplication.Beep();
                 UnityEditor.EditorApplication.isPaused = true;
             }
@@ -272,13 +277,23 @@ public class Manager : MonoBehaviour
         City cityTemp;
 
         randomRota = Random.Range(0, Rota.Count - 1);
-        randomPos1 = Random.Range(0, Rota.Count - 1);
-        randomPos2 = Random.Range(0, Rota.Count - 1);
-        Debug.Log("MUTAÇÃO: Cidade escolhida foi de cromo " + Rota[randomRota].MostrarCromo());
 
+        Debug.Log("MUTAÇÃO: Cidade escolhida foi de cromo " + Rota[randomRota].MostrarCromo());
+        Rota[randomRota].dna.RemoveAt(0);
+
+        randomPos1 = Random.Range(0, Rota[randomRota].dna.Count - 1);
+        randomPos2 = Random.Range(0, Rota[randomRota].dna.Count - 1);
+
+        if (randomPos1 == randomPos2)
+        {
+           randomPos2 = Random.Range(0, Rota[randomRota].dna.Count - 1);
+        }
+       
         cityTemp = Rota[randomRota].dna[randomPos1];
         Rota[randomRota].dna[randomPos1] = Rota[randomRota].dna[randomPos2];
         Rota[randomRota].dna[randomPos2] = cityTemp;
+
+        Rota[randomRota].dna.Insert(0, Cidade[0]);
 
         Debug.Log("MUTAÇÃO: Cidade após mutação " + Rota[randomRota].MostrarCromo());
     }
@@ -302,7 +317,4 @@ public class Manager : MonoBehaviour
 
         Rota.RemoveAt(menosfit);
     }
-
-
-
 }
