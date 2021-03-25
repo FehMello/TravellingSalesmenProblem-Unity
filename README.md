@@ -1,12 +1,12 @@
 # Travelling Salesmen Problem
---PORTUGUESE--
-COMO USAR:
+## PORTUGUESE
+###### COMO USAR:
 1) Selecione o GameObject SimulationManager na hierarquia.
 2) Insira, no inspector, o número desejado nos campos "Qnt Cidades" (Número de cidades geradas), "Populacao" (Número de indivíduos), e "Limite Geracoes" (Limite de geração ou condição de fim).
 3) Certifique que as quantidades de todas essas variáveis são no mínimo maior que 2.
 4) Clique em Play no Editor.
 
-COMO FUNCIONA A LÓGICA:
+###### COMO FUNCIONA A LÓGICA:
 1) O algorítimo cria, em posições aleatórias, o número de cidades especificado no inspector.
 2) É associado uma ID a cada cidade, e cada cidade é colocada dentro de uma única lista. A cidade 0 é definida como origem por convenção.
 3) Conforme a quantidade de população inserida no inspector, é criado uma lista de indivíduos chamados "Rota", na qual cada rota guarda uma sequência de cidades aleatórias, onde a primeira é sempre a cidade 0. Esta é a população inicial.
@@ -17,14 +17,14 @@ COMO FUNCIONA A LÓGICA:
 8) Por fim, a pior rota é eliminada (a que tiver maior distância), mantendo o número de população.
 9) A fase 5 até 8 são repetidas em loop até que a geração atinja o limite de gerações especificado no inspector.
 
---ENGLISH--
-HOW TO USE:
+## ENGLISH
+###### HOW TO USE:
 1) Select SimulationManager in hierachy.
 2) Insert, on inspector, the desired number in the fields "Qnt Cidades" (Number of generated cities), "Populacao" (Number of individuals), e "Limite Geracoes" (Generation limit or simulation end condition).
 3) Certify that the quantities of all these variables are minimum greater than 2.
 4) Click Play in Editor.
 
-HOW LOGIC WORKS:
+###### HOW LOGIC WORKS:
 1) The algorithm creates, in random positions, the number of cities specified in the inspector.
 2) An ID is associated with each city, and each city is placed within a single list. City 0 is defined as origin by convention.
 3) Depending on the amount of population entered in the inspector, a list of individuals called "Route" is created, in which each route stores a sequence of random cities, where the first one is always the city 0. This is the initial population.
