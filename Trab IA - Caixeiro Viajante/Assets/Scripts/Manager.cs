@@ -18,7 +18,7 @@ public class Manager : MonoBehaviour
     public int secondBest = 0;
 
 
-    private List <Rota> _Rotas = new List<Rota>(); //O tamanho dessa lista tem que se manter igual à qnt de população durante o programa todo.
+    public List <Rota> _Rotas = new List<Rota>(); //O tamanho dessa lista tem que se manter igual à qnt de população durante o programa todo.
     public List<City> _Cidades = new List<City>();//Pra ter controle das cidades
     private City _CityScript;
     private float MenorDist; //Variavel modifica dentro de mais de um metodo
