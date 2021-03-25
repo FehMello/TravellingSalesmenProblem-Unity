@@ -142,11 +142,6 @@ public class Manager : MonoBehaviour
                 }
                
 
-                //for (int i = 0; i < Rota.Count; i++)
-                //{
-                //    Debug.Log("Rota " + i + " tem cromo " + Rota[i].MostrarCromo() + " e distancia percorrida " + Rota[i].CalculoDistRota());
-                //}
-
                 RetiraMenosFit();
 
 
