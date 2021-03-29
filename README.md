@@ -35,7 +35,8 @@
 8) Finally, the worst route is eliminated (the one with the longest distance), maintaining the number of population.
 9) Phases 5 through 8 repeats until the generation number reaches the generation limit specified in the inspector.
 
-###### ATTENTION
+## ATTENTION
 PT: O código de Extension.cs, na qual contém uma função shuffle, não é meu. Foi retirado de um forum da Unity.
+
 ENG: The code in Extension.cs, in which contains a shuffle function, isnt mine. Got it from Unity forum. The
 
