@@ -38,5 +38,5 @@
 ## ATTENTION
 PT: O código de Extension.cs, na qual contém uma função shuffle, não é meu. Foi retirado de um forum da Unity.
 
-ENG: The code in Extension.cs, in which contains a shuffle function, isnt mine. Got it from Unity forum. The
+ENG: The code in Extension.cs, in which contains a shuffle function, isnt mine. Got it from Unity forum.
 
